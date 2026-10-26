@@ -98,3 +98,6 @@ sync_github_name = false
 
 [people.ki2pixel]
 display_name = "ki2pixel"
+
+[people.abdallah-shehawey]
+sync_github_name = true

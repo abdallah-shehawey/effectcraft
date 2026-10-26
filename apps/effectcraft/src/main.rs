@@ -180,17 +180,22 @@ fn main() -> eframe::Result {
     let mut launch = launch_guard::Launch::begin(effectcraft_host::config_dir().as_deref(), std::env::var_os("WGPU_BACKEND").is_some());
     let on_gl = launch.backends == Some(eframe::wgpu::Backends::GL);
     let notice = launch.notice.take();
+    let saved_window = effectcraft_host::config_dir().and_then(|dir| window::load(&effectcraft_engine::config::DirConfig::new(dir)));
     let options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default()
-            .with_title("EffectCraft")
-            .with_inner_size(window::DEFAULT_SIZE)
-            .with_min_inner_size(window::MIN_SIZE)
-            .with_drag_and_drop(true)
-            // Started for an agent (`--control`): open without taking the user's keyboard focus.
-            .with_active(control_port.is_none())
-            .with_icon(app_icon())
-            // Wayland matches the window to `ai.storyteller.effectcraft.desktop` by this ID.
-            .with_app_id(appimage::APP_ID),
+        persist_window: control_port.is_none(),
+        viewport: window::start_viewport(
+            egui::ViewportBuilder::default()
+                .with_title("EffectCraft")
+                .with_inner_size(window::DEFAULT_SIZE)
+                .with_min_inner_size(window::MIN_SIZE)
+                .with_drag_and_drop(true)
+                // Started for an agent (`--control`): open without taking the user's keyboard focus.
+                .with_active(control_port.is_none())
+                .with_icon(app_icon())
+                // Wayland matches the window to `ai.storyteller.effectcraft.desktop` by this ID.
+                .with_app_id(appimage::APP_ID),
+            saved_window,
+        ),
         event_loop_builder: agent_event_loop(control_port.is_some()),
         wgpu_options: wgpu_options(launch.backends),
         ..Default::default()
@@ -247,8 +252,8 @@ fn main() -> eframe::Result {
             }
             session.load_settings();
             // Fit the window to its monitor, or put it back where it was (still hidden).
-            let saved_window = session.config.as_deref().and_then(window::load);
-            let opened = cc.winit_window().map(|w| window::restore(w, saved_window));
+            let has_native_state = cc.storage.is_some_and(|s| s.get_string("window").is_some());
+            let opened = if has_native_state { saved_window } else { cc.winit_window().map(|w| window::restore(w, saved_window)) };
             let recovery = if control_port.is_none() { session.begin_recovery() } else { None };
             let project = files.iter().find(|f| is_project_file(f)).cloned();
             if let Some(p) = project {
@@ -438,6 +443,11 @@ struct Desktop {
 }
 
 impl eframe::App for Desktop {
+    // Preferences have their own store; eframe persists only the native window.
+    fn persist_egui_memory(&self) -> bool {
+        false
+    }
+
     fn logic(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         #[cfg(target_os = "macos")]
         self.menu.update(&mut self.app, ctx);
