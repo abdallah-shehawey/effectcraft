@@ -16,7 +16,7 @@ Bundled fonts
 
 EffectCraft embeds Inter, Noto Serif, JetBrains Mono and Noto Sans Symbols 2 from
 assets/fonts/. The pinned egui dependency (epaint_default_fonts, revision
-ba04bd7de66afaba82fd44aa235aa1d060559ee7) additionally embeds Ubuntu Light, Hack,
+69750b71a97dc4672e2fbb70863b838e6795c910) additionally embeds Ubuntu Light, Hack,
 Noto Emoji, egui-icons and emoji-icon-font through EffectCraft's enabled `default_fonts`
 and `monochrome_emoji_fonts` features; no font file from that dependency is added to
 this repository. The complete copyright notices and licence texts required for all of
