@@ -1,9 +1,9 @@
 # EffectCraft Roadmap
 
 > **Native-window review follow-up (2026-10-27):** A malformed eframe window record now uses the legacy fallback. Native X11 restores fit only their physical position to connected monitors, preserving eframe size, zoom and maximize state. Synthetic storage and disconnected-monitor regressions cover both cases.
-
+>
 > **Dependency integration (2026-10-27):** Reconciled the latest upstream module changes and shared `craft-libs` revision `92d392c` while retaining the window-restoration `egui` revision `69750b7` pending storytold/egui#3. Feature readiness estimates are unchanged.
-
+>
 > **Integration validation (2026-10-27):** The upstream synchronization at `e6e512a4` retains native-window persistence and the desktop logic callback documentation. Formatting, Clippy, doctests, PDF dependency checks, layering, assets and WASM passed on Linux. The full test run retains the three previously reproduced Noto Serif/style and GPU wide-penumbra failures; the engine, text and GPU crates are identical to upstream. Parity estimates are unchanged.
 
 **Stage: alpha** · next: beta, ~30 points of "ready for real work" and ~350–620 h away

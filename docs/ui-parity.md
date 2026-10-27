@@ -1,7 +1,7 @@
 # UI parity
 
 > **Window restore follow-up (2026-10-27):** Unreadable native records use the legacy fallback; X11 rescues disconnected-monitor positions without changing restored native size or maximize state. Windows/macOS native acceptance remains open.
-
+>
 > **Last reviewed:** 2026-10-12 · **Last updated:** 2026-10-27 · **Change:** trivial (native record fallback and X11 position rescue; previously: window size and maximized state survive restarts at any interface size; GNOME Wayland caption buttons, storytold/egui#3) · **Target:** Adobe After Effects 2026
 
 How closely EffectCraft's interaction matches After Effects: tools, handles, snapping, nudging,
