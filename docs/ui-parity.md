@@ -1,6 +1,8 @@
 # UI parity
 
-> **Last reviewed:** 2026-10-12 · **Last updated:** 2026-10-26 · **Change:** trivial (window size and maximized state survive restarts at any interface size; GNOME Wayland caption buttons, storytold/egui#3) · **Target:** Adobe After Effects 2026
+> **Window restore follow-up (2026-10-27):** Unreadable native records use the legacy fallback; X11 rescues disconnected-monitor positions without changing restored native size or maximize state. Windows/macOS native acceptance remains open.
+
+> **Last reviewed:** 2026-10-12 · **Last updated:** 2026-10-27 · **Change:** trivial (native record fallback and X11 position rescue; previously: window size and maximized state survive restarts at any interface size; GNOME Wayland caption buttons, storytold/egui#3) · **Target:** Adobe After Effects 2026
 
 How closely EffectCraft's interaction matches After Effects: tools, handles, snapping, nudging,
 modifier keys, shortcuts, drag behaviour, numeric entry, panels, context menus and feel. Evidence
@@ -49,6 +51,7 @@ Effects running; most of the rest parallelises.
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-27 | trivial | Decode native window records before bypassing the legacy fallback; rescue native X11 positions on connected monitors while preserving size and maximize state; synthetic regressions pass |
 | 2026-10-26 | trivial | Window size and maximized state survive restarts at any interface size; standard caption buttons on GNOME Wayland (storytold/egui#3) |
 | 2026-10-18 | minor | A shape group's inner Contents (After Effects' elided Vectors group) draws no row: the group's path, fill/stroke and Transform list directly under the group |
 | 2026-10-13 | patch | Layer bounds are suppressed during path-point editing (#1220); shape/mask interaction regressions |

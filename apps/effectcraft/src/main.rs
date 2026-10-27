@@ -266,8 +266,15 @@ fn main() -> eframe::Result {
             }
             session.load_settings();
             // Fit the window to its monitor, or put it back where it was (still hidden).
-            let has_native_state = cc.storage.is_some_and(|s| s.get_string("window").is_some());
-            let opened = if has_native_state { saved_window } else { cc.winit_window().map(|w| window::restore(w, saved_window)) };
+            let has_native_state = window::has_native_window(control_port.is_none(), cc.storage);
+            let opened = if has_native_state {
+                if let Some(window) = cc.winit_window() {
+                    window::fit_native_position(window);
+                }
+                saved_window
+            } else {
+                cc.winit_window().map(|w| window::restore(w, saved_window))
+            };
             let recovery = if control_port.is_none() { session.begin_recovery() } else { None };
             let project = files.iter().find(|f| is_project_file(f)).cloned();
             if let Some(p) = project {
