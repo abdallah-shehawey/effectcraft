@@ -1,8 +1,10 @@
 # EffectCraft Roadmap
 
+> **Integration validation (2026-10-27):** The upstream synchronization at `e6e512a4` retains native-window persistence and the desktop logic callback documentation. Formatting, Clippy, doctests, PDF dependency checks, layering, assets and WASM passed on Linux. The full test run retains the three previously reproduced Noto Serif/style and GPU wide-penumbra failures; the engine, text and GPU crates are identical to upstream. Parity estimates are unchanged.
+
 **Stage: alpha** · next: beta, ~30 points of "ready for real work" and ~350–620 h away
 
-> **Last reviewed:** 2026-10-12 · **Last updated:** 2026-10-26 · **Change:** trivial (progress log: windows reopen at their last size or maximized at any interface size, storytold/egui#3) · **Target:** Adobe After Effects 2026 (26.5.0.89)
+> **Last reviewed:** 2026-10-12 · **Last updated:** 2026-10-27 · **Change:** trivial (upstream integration validation; progress log: windows reopen at their last size or maximized at any interface size, storytold/egui#3) · **Target:** Adobe After Effects 2026 (26.5.0.89)
 
 EffectCraft aims to do what After Effects does, with the same panels, menus and behaviour, written
 from scratch in Rust. This page is the one-page summary; the evidence is in
@@ -159,6 +161,7 @@ Come tell us what matters most to you on [Discord](https://discord.gg/artcraft).
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-27 | trivial | Record upstream synchronization validation and the three existing font/GPU test failures; parity estimates unchanged |
 | 2026-10-26 | trivial | Progress log: windows reopen at their last size or maximized at any interface size; standard caption buttons on GNOME Wayland (storytold/egui#3) |
 | 2026-10-12 | minor | Open-issue count (134 to 216), crash list and localization share (12% to 18%) updated to match docs/gaps.md |
 | 2026-10-12 | patch | Roto Brush span validation after trimming; command regressions for both layer edges |
