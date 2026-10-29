@@ -117,12 +117,6 @@ Come tell us what matters most to you on [Discord](https://discord.gg/artcraft).
 
 ## Progress log
 
-- 2026-10-29: Window geometry uses only the existing window.json store and Tracker, including monitor fitting; control runs skip saved geometry. Integrated the upstream desktop quit path (#1762).
-
-- 2026-10-26: Windows reopen at their last size, or maximized, at any interface size (such as 150%),
-  and Restore after a maximized restart returns to the last normal size. On GNOME Wayland, where the
-  compositor draws no frame, windows get standard minimize, maximize and close buttons. Shared
-  change: storytold/egui#3; checked on Linux only.
 - 2026-10-16: Convert To Bezier Path turns a shape layer's Rectangle, Ellipse or Polystar
   path into an editable Path 1 with the same geometry, as After Effects does; it used to
   apply to mask RotoBezier only, so a parametric shape path could not be converted at all
