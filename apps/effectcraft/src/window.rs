@@ -30,22 +30,6 @@ pub const MIN_SIZE: [f32; 2] = [960.0, 600.0];
 /// say how much of the screen they take): a monitor with less room opens it maximized.
 const SCREEN_ROOM: [f32; 2] = [64.0, 128.0];
 
-/// A present but unreadable native record does not suppress the legacy position fallback.
-pub fn has_native_window(persist_window: bool, storage: Option<&dyn eframe::Storage>) -> bool {
-    persist_window && storage.and_then(|s| eframe::get_value::<egui_winit::WindowSettings>(s, "window")).is_some()
-}
-
-/// Seed the native builder from legacy preferences before eframe creates the window. Its
-/// persisted native state takes precedence on later launches.
-pub fn start_viewport(builder: egui::ViewportBuilder, saved: Option<WindowGeometry>) -> egui::ViewportBuilder {
-    let Some(saved) = saved else { return builder };
-    let size: [f32; 2] = std::array::from_fn(|i| {
-        let side = saved.size[i];
-        if side.is_finite() && side > 0.0 { side.clamp(MIN_SIZE[i], 16384.0) } else { DEFAULT_SIZE[i] }
-    });
-    builder.with_inner_size(size).with_maximized(saved.maximized)
-}
-
 /// A monitor: its top-left corner and size in physical pixels, and its scale factor.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Monitor {
@@ -159,54 +143,6 @@ pub fn restore(window: &winit::window::Window, saved: Option<WindowGeometry>) ->
     g
 }
 
-/// Move an eframe-restored X11 window onto a connected monitor without changing its native size
-/// or maximize request. Wayland places windows itself; other platforms have eframe's own rescue.
-pub fn fit_native_position(window: &winit::window::Window) {
-    #[cfg(target_os = "linux")]
-    {
-        use winit::raw_window_handle::{HasWindowHandle as _, RawWindowHandle};
-        if !matches!(window.window_handle().map(|h| h.as_raw()), Ok(RawWindowHandle::Xlib(_) | RawWindowHandle::Xcb(_))) {
-            return;
-        }
-        let Ok(pos) = window.outer_position() else { return };
-        let size = window.outer_size();
-        let handles: Vec<_> = window.available_monitors().collect();
-        let monitors: Vec<_> = handles.iter().map(|m| Monitor::new(m.position(), m.size(), m.scale_factor())).collect();
-        let home = window.primary_monitor().or_else(|| window.current_monitor()).and_then(|c| handles.iter().position(|m| *m == c));
-        if let Some([x, y]) = fitted_native_position([pos.x, pos.y], [size.width, size.height], &monitors, home) {
-            window.set_outer_position(PhysicalPosition::new(x, y));
-        }
-    }
-    #[cfg(not(target_os = "linux"))]
-    let _ = window;
-}
-
-/// Fit only a physical position: native restore sizes and maximized state remain eframe's.
-#[cfg(any(target_os = "linux", test))]
-fn fitted_native_position(pos: [i32; 2], size: [u32; 2], monitors: &[Monitor], home: Option<usize>) -> Option<[i32; 2]> {
-    let shown = monitors
-        .iter()
-        .filter_map(|m| {
-            let span = |i: usize| {
-                let start = i64::from(pos[i]).max(m.pos[i]);
-                let end = (i64::from(pos[i]) + i64::from(size[i])).min(m.pos[i] + m.size[i]);
-                (end - start).max(0)
-            };
-            let area = span(0).saturating_mul(span(1));
-            (area > 0).then_some((area, m))
-        })
-        .max_by_key(|(area, _)| *area)
-        .map(|(_, m)| m);
-    let monitor = shown.or_else(|| home.and_then(|i| monitors.get(i))).or(monitors.first())?;
-    let fitted = std::array::from_fn(|i| {
-        let lo = monitor.pos[i];
-        let hi = lo + (monitor.size[i] - i64::from(size[i])).max(0);
-        let wanted = if shown.is_some() { i64::from(pos[i]) } else { lo + (hi - lo) / 2 };
-        i32::try_from(wanted.clamp(lo, hi)).unwrap_or_default()
-    });
-    (fitted != pos).then_some(fitted)
-}
-
 /// Per frame: remember the window's geometry for the next launch. Minimized or full screen keeps
 /// the last one; maximized only sets its flag, so un-maximizing next time restores the last size.
 pub fn track(ctx: &egui::Context, geometry: &mut Option<WindowGeometry>) {
@@ -289,54 +225,6 @@ impl Tracker {
 mod tests {
     use super::*;
     use effectcraft_engine::config::MemoryConfig;
-
-    /// eframe's storage with only a `"window"` value.
-    struct WindowStorage(&'static str);
-
-    impl eframe::Storage for WindowStorage {
-        fn get_string(&self, key: &str) -> Option<String> {
-            (key == "window").then(|| self.0.to_owned())
-        }
-        fn set_string(&mut self, _: &str, _: String) {}
-        fn remove_string(&mut self, _: &str) {}
-        fn flush(&mut self) {}
-    }
-
-    /// The legacy preferences' place applies unless eframe really restored a window: not from a
-    /// corrupt value, and not in a run that doesn't persist the window (no preferences, control).
-    #[test]
-    fn only_a_readable_window_eframe_restores_counts_as_native_state() {
-        let saved = WindowStorage(
-            "(normal_geometry:(outer_position_pixels:Some((x:10.0,y:20.0)),scale_factor:1.0,\
-         inner_size_points:(x:800.0,y:600.0),zoom_factor:Some(1.0)),fullscreen:false,maximized:true)",
-        );
-        assert!(has_native_window(true, Some(&saved)));
-        assert!(!has_native_window(false, Some(&saved)));
-        assert!(!has_native_window(true, Some(&WindowStorage("(normal_geometry:"))));
-        assert!(!has_native_window(true, None));
-    }
-
-    #[test]
-    fn native_restore_rescues_only_the_position_in_physical_pixels() {
-        let two = [monitor(0, 0, 2560, 1440, 1.0), monitor(2560, 0, 1920, 1080, 1.5)];
-        assert_eq!(fitted_native_position([2700, 50], [1000, 700], &two, Some(0)), None);
-        assert_eq!(fitted_native_position([2700, 50], [1000, 700], &two[..1], Some(0)), Some([780, 370]));
-        assert_eq!(fitted_native_position([4300, 900], [1000, 700], &two, Some(0)), Some([3480, 380]));
-        assert_eq!(fitted_native_position([9000, 9000], [4000, 2000], &two[..1], Some(0)), Some([0, 0]));
-        assert_eq!(fitted_native_position([9000, 9000], [1000, 700], &[], None), None);
-    }
-
-    #[test]
-    fn legacy_window_state_seeds_the_native_restore_size_and_maximize_request() {
-        let geometry = WindowGeometry { pos: None, size: [1170.0, 730.0], maximized: true };
-        let builder = start_viewport(egui::ViewportBuilder::default(), Some(geometry));
-        assert_eq!(builder.inner_size, Some(egui::vec2(1170.0, 730.0)));
-        assert_eq!(builder.maximized, Some(true));
-        let corrupt = WindowGeometry { size: [f32::NAN, f32::INFINITY], ..geometry };
-        assert_eq!(start_viewport(egui::ViewportBuilder::default(), Some(corrupt)).inner_size, Some(DEFAULT_SIZE.into()));
-        let tiny = WindowGeometry { size: [1.0, 1.0], ..geometry };
-        assert_eq!(start_viewport(egui::ViewportBuilder::default(), Some(tiny)).inner_size, Some(MIN_SIZE.into()));
-    }
 
     fn monitor(x: i32, y: i32, w: u32, h: u32, scale: f64) -> Monitor {
         Monitor::new(PhysicalPosition::new(x, y), PhysicalSize::new(w, h), scale)

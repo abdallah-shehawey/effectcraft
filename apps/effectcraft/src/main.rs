@@ -9,8 +9,8 @@
 //!
 //! `--control <port>` (or `EFFECTCRAFT_CONTROL_PORT`) starts a localhost JSON-lines control server;
 //! see `effectcraft_ui_egui::control` for the methods.
-#![cfg_attr(all(target_os = "windows", not(debug_assertions)), windows_subsystem = "windows")]
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
+#![cfg_attr(all(target_os = "windows", not(debug_assertions)), windows_subsystem = "windows")]
 
 // Built everywhere so its tests run on every platform; only Linux AppImages use it.
 mod appearance;
@@ -194,22 +194,19 @@ fn main() -> eframe::Result {
     let mut launch = launch_guard::Launch::begin(effectcraft_host::config_dir().as_deref(), std::env::var_os("WGPU_BACKEND").is_some());
     let on_gl = launch.backends == Some(eframe::wgpu::Backends::GL);
     let notice = launch.notice.take();
-    let saved_window = effectcraft_host::config_dir().and_then(|dir| window::load(&effectcraft_engine::config::DirConfig::new(dir)));
     let options = eframe::NativeOptions {
-        persist_window: control_port.is_none(),
-        viewport: window::start_viewport(
-            egui::ViewportBuilder::default()
-                .with_title("EffectCraft")
-                .with_inner_size(window::DEFAULT_SIZE)
-                .with_min_inner_size(window::MIN_SIZE)
-                .with_drag_and_drop(true)
-                // Started for an agent (`--control`): open without taking the user's keyboard focus.
-                .with_active(control_port.is_none())
-                .with_icon(app_icon())
-                // Wayland matches the window to `ai.storyteller.effectcraft.desktop` by this ID.
-                .with_app_id(appimage::APP_ID),
-            saved_window,
-        ),
+        // window.json in the selected config directory is the only window-state store.
+        persist_window: false,
+        viewport: egui::ViewportBuilder::default()
+            .with_title("EffectCraft")
+            .with_inner_size(window::DEFAULT_SIZE)
+            .with_min_inner_size(window::MIN_SIZE)
+            .with_drag_and_drop(true)
+            // Started for an agent (`--control`): open without taking the user's keyboard focus.
+            .with_active(control_port.is_none())
+            .with_icon(app_icon())
+            // Wayland matches the window to `ai.storyteller.effectcraft.desktop` by this ID.
+            .with_app_id(appimage::APP_ID),
         event_loop_builder: agent_event_loop(control_port.is_some()),
         wgpu_options: wgpu_options(launch.backends),
         ..Default::default()
@@ -266,15 +263,8 @@ fn main() -> eframe::Result {
             }
             session.load_settings();
             // Fit the window to its monitor, or put it back where it was (still hidden).
-            let has_native_state = window::has_native_window(control_port.is_none(), cc.storage);
-            let opened = if has_native_state {
-                if let Some(window) = cc.winit_window() {
-                    window::fit_native_position(window);
-                }
-                saved_window
-            } else {
-                cc.winit_window().map(|w| window::restore(w, saved_window))
-            };
+            let saved_window = control_port.is_none().then(|| session.config.as_deref().and_then(window::load)).flatten();
+            let opened = cc.winit_window().map(|w| window::restore(w, saved_window));
             let recovery = if control_port.is_none() { session.begin_recovery() } else { None };
             let project = files.iter().find(|f| is_project_file(f)).cloned();
             if let Some(p) = project {
@@ -377,14 +367,11 @@ fn main() -> eframe::Result {
             }))
         }),
     );
-    match &result {
-        Ok(()) => log::info!("the window closed"),
-        Err(e) => {
-            if on_gl {
-                launch_guard::opengl_failed(effectcraft_host::config_dir().as_deref());
-            }
-            startup_failed(e, !on_gl && cfg!(not(target_os = "macos")));
+    if let Err(e) = &result {
+        if on_gl {
+            launch_guard::opengl_failed(effectcraft_host::config_dir().as_deref());
         }
+        startup_failed(e, !on_gl && cfg!(not(target_os = "macos")));
     }
     result
 }
@@ -467,12 +454,8 @@ struct Desktop {
 }
 
 impl eframe::App for Desktop {
-    // Preferences have their own store; eframe persists only the native window.
-    fn persist_egui_memory(&self) -> bool {
-        false
-    }
-
-    /// The desktop host's logic tick: update the macOS menu bar, run the shared app tick and close the IME pass.
+    /// The desktop host's logic tick: update the macOS menu bar, run the shared app tick, close the IME pass, show the
+    /// file dialogs asked for and, last, hand a close to the platform quit.
     fn logic(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         #[cfg(target_os = "macos")]
         self.menu.update(&mut self.app, ctx);
@@ -481,6 +464,7 @@ impl eframe::App for Desktop {
         if let Some(asked) = &self.file_dialogs {
             sheet_dialogs::show_asked(asked, frame, ctx);
         }
+        effectcraft_ui_egui::panels::unsaved::quit_on_close(ctx);
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
@@ -501,6 +485,9 @@ impl eframe::App for Desktop {
     }
 
     fn on_exit(&mut self) {
+        // On macOS the app quits through `-[NSApplication terminate:]`, and the process ends
+        // before `eframe::run_native` returns (#341).
+        log::info!("the window is closing");
         self.launch.exited();
         self.window.save(self.app.session.config.as_deref());
         self.app.on_exit();

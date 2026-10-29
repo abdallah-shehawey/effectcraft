@@ -1,14 +1,8 @@
 # EffectCraft Roadmap
 
-> **Native-window review follow-up (2026-10-27):** A malformed eframe window record now uses the legacy fallback. Native X11 restores fit only their physical position to connected monitors, preserving eframe size, zoom and maximize state. Synthetic storage and disconnected-monitor regressions cover both cases.
->
-> **Dependency integration (2026-10-27):** Reconciled the latest upstream module changes and shared `craft-libs` revision `92d392c` while retaining the window-restoration `egui` revision `69750b7` pending storytold/egui#3. Feature readiness estimates are unchanged.
->
-> **Integration validation (2026-10-27):** The upstream synchronization at `e6e512a4` retains native-window persistence and the desktop logic callback documentation. Formatting, Clippy, doctests, PDF dependency checks, layering, assets and WASM passed on Linux. The full test run retains the three previously reproduced Noto Serif/style and failures in the GPU wide-penumbra test; the engine, text and GPU crates are identical to upstream. Parity estimates are unchanged.
-
 **Stage: alpha** · next: beta, ~30 points of "ready for real work" and ~350–620 h away
 
-> **Last reviewed:** 2026-10-12 · **Last updated:** 2026-10-27 · **Change:** trivial (native record fallback and X11 position rescue; previously: upstream integration validation; progress log: windows reopen at their last size or maximized at any interface size, storytold/egui#3) · **Target:** Adobe After Effects 2026 (26.5.0.89)
+> **Last reviewed:** 2026-10-12 · **Last updated:** 2026-10-29 · **Change:** trivial (one window-state store in the config directory; previously: upstream integration validation; progress log: windows reopen at their last size or maximized at any interface size, storytold/egui#3) · **Target:** Adobe After Effects 2026 (26.5.0.89)
 
 EffectCraft aims to do what After Effects does, with the same panels, menus and behaviour, written
 from scratch in Rust. This page is the one-page summary; the evidence is in
@@ -123,7 +117,7 @@ Come tell us what matters most to you on [Discord](https://discord.gg/artcraft).
 
 ## Progress log
 
-- 2026-10-27: Native window fallback and X11 position rescue regressions pass; integrated the current shared-library revision without dropping the restoration pin.
+- 2026-10-27: Window geometry uses only the existing window.json store and Tracker, including monitor fitting; control runs skip saved geometry. Integrated the upstream desktop quit path (#1762).
 
 - 2026-10-26: Windows reopen at their last size, or maximized, at any interface size (such as 150%),
   and Restore after a maximized restart returns to the last normal size. On GNOME Wayland, where the
@@ -167,6 +161,7 @@ Come tell us what matters most to you on [Discord](https://discord.gg/artcraft).
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-29 | trivial | Window geometry uses the existing window.json store and Tracker only; eframe persistence is disabled. Control runs skip saved geometry. Integrated upstream #1762 and removed review banners. Scores and estimates unchanged. |
 | 2026-10-27 | trivial | Decode native window records before bypassing the legacy fallback; rescue native X11 positions on connected monitors while preserving size and maximize state; synthetic regressions pass |
 | 2026-10-27 | trivial | Record upstream synchronization validation and the three existing font/GPU test failures; parity estimates unchanged |
 | 2026-10-26 | trivial | Progress log: windows reopen at their last size or maximized at any interface size; standard caption buttons on GNOME Wayland (storytold/egui#3) |

@@ -8,8 +8,6 @@ version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ad442f58ee04714aaa0ba0a2768c1ea1935b29507bb22ddece8cbbc76db02932"
 dependencies = [
- "enumn",
- "serde",
  "uuid",
 ]
 
@@ -127,7 +125,6 @@ dependencies = [
  "cfg-if",
  "getrandom 0.3.4",
  "once_cell",
- "serde",
  "version_check",
  "zerocopy",
 ]
@@ -491,9 +488,6 @@ name = "bitflags"
 version = "2.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
-dependencies = [
- "serde_core",
-]
 
 [[package]]
 name = "block-buffer"
@@ -1093,6 +1087,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "craft-quit"
+version = "0.1.0"
+source = "git+https://github.com/storytold/craft-libs?rev=92d392cff132eaf53e13afff77f38b5c11b73aa0#92d392cff132eaf53e13afff77f38b5c11b73aa0"
+dependencies = [
+ "dispatch2",
+ "egui",
+ "objc2 0.6.5",
+ "objc2-app-kit 0.3.2",
+]
+
+[[package]]
 name = "craft-ui"
 version = "0.1.0"
 source = "git+https://github.com/storytold/craft-libs?rev=92d392cff132eaf53e13afff77f38b5c11b73aa0#92d392cff132eaf53e13afff77f38b5c11b73aa0"
@@ -1331,12 +1336,11 @@ source = "git+https://github.com/storytold/egui.git?rev=69750b71a97dc4672e2fbb70
 dependencies = [
  "bytemuck",
  "emath",
- "serde",
 ]
 
 [[package]]
 name = "effectcraft"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "cpal",
  "craft-update",
@@ -1345,7 +1349,6 @@ dependencies = [
  "effectcraft-ui-egui",
  "eframe",
  "egui",
- "egui-winit",
  "fmv-macos-events",
  "log",
  "muda",
@@ -1363,7 +1366,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-automation"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-engine",
  "effectcraft-host",
@@ -1375,14 +1378,14 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-av1enc"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "filmcraft-av1",
 ]
 
 [[package]]
 name = "effectcraft-cli"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "cpu-time",
  "effectcraft-automation",
@@ -1398,7 +1401,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-color"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "proptest",
  "serde",
@@ -1406,7 +1409,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-effects"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "chrono",
  "effectcraft-color",
@@ -1424,7 +1427,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-engine"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "chrono",
  "craft-docpath",
@@ -1459,7 +1462,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-export"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-av1enc",
  "effectcraft-color",
@@ -1489,7 +1492,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-expr"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "boa_engine",
  "effectcraft-color",
@@ -1506,7 +1509,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-geom"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "proptest",
  "serde",
@@ -1514,7 +1517,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-gpu"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "bytemuck",
  "effectcraft-color",
@@ -1536,14 +1539,14 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-hevcenc"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "filmcraft-hevc",
 ]
 
 [[package]]
 name = "effectcraft-host"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-engine",
  "effectcraft-export",
@@ -1568,7 +1571,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-interchange"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-color",
  "effectcraft-keyframe",
@@ -1587,7 +1590,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-keyframe"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-color",
  "effectcraft-geom",
@@ -1599,7 +1602,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-lottie"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "craft-docpath",
  "effectcraft-color",
@@ -1617,7 +1620,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-media"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "craft-docpath",
  "effectcraft-model",
@@ -1646,7 +1649,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-model"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-geom",
  "image",
@@ -1658,14 +1661,14 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-opusenc"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "filmcraft-opus",
 ]
 
 [[package]]
 name = "effectcraft-path"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-geom",
  "effectcraft-keyframe",
@@ -1677,7 +1680,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-pdf"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "craft-pdf",
  "effectcraft-raster",
@@ -1693,7 +1696,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-plugin"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-effects",
  "effectcraft-keyframe",
@@ -1705,7 +1708,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-project"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-color",
  "effectcraft-geom",
@@ -1718,14 +1721,14 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-psd"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "miniz_oxide 0.9.1",
 ]
 
 [[package]]
 name = "effectcraft-raster"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-color",
  "effectcraft-geom",
@@ -1734,7 +1737,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-render"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-color",
  "effectcraft-effects",
@@ -1756,7 +1759,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-script"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "boa_engine",
  "effectcraft-engine",
@@ -1774,7 +1777,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-segment"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "miniz_oxide 0.9.1",
  "ndarray",
@@ -1783,7 +1786,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-svg"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-geom",
  "effectcraft-path",
@@ -1795,7 +1798,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-text"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-keyframe",
  "harfrust",
@@ -1807,7 +1810,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-time"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "proptest",
  "serde",
@@ -1815,7 +1818,7 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-track"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-raster",
  "effectcraft-segment",
@@ -1827,9 +1830,10 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-ui-egui"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "chrono",
+ "craft-quit",
  "craft-ui",
  "craft-update",
  "effectcraft-color",
@@ -1861,11 +1865,11 @@ dependencies = [
 
 [[package]]
 name = "effectcraft-vp9enc"
-version = "0.17.0"
+version = "0.18.0"
 
 [[package]]
 name = "effectcraft-web"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "effectcraft-engine",
  "effectcraft-export",
@@ -1911,9 +1915,7 @@ dependencies = [
  "pollster 1.0.1",
  "profiling",
  "raw-window-handle",
- "ron",
  "send_wrapper",
- "serde",
  "static_assertions",
  "wasm-bindgen",
  "web-sys",
@@ -1937,8 +1939,6 @@ dependencies = [
  "log",
  "nohash-hasher",
  "profiling",
- "ron",
- "serde",
  "smallvec",
  "unicode-segmentation",
  "web-sys",
@@ -1982,7 +1982,6 @@ dependencies = [
  "parking_lot",
  "profiling",
  "raw-window-handle",
- "serde",
  "smithay-clipboard",
  "web-time",
  "webbrowser",
@@ -2032,7 +2031,6 @@ version = "0.37.0"
 source = "git+https://github.com/storytold/egui.git?rev=69750b71a97dc4672e2fbb70863b838e6795c910#69750b71a97dc4672e2fbb70863b838e6795c910"
 dependencies = [
  "bytemuck",
- "serde",
 ]
 
 [[package]]
@@ -2077,17 +2075,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "enumn"
-version = "0.1.14"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f9ed6b3789237c8a0c1c505af1c7eb2c560df6186f01b098c3a1064ea532f38"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.119",
-]
-
-[[package]]
 name = "epaint"
 version = "0.37.0"
 source = "git+https://github.com/storytold/egui.git?rev=69750b71a97dc4672e2fbb70863b838e6795c910#69750b71a97dc4672e2fbb70863b838e6795c910"
@@ -2104,7 +2091,6 @@ dependencies = [
  "parking_lot",
  "profiling",
  "self_cell",
- "serde",
  "skrifa",
  "smallvec",
  "unicode-bidi",
@@ -2581,7 +2567,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b8eb065f3251655b3c90e22e5e363f310fc5332fb3402e37bbc94752283248f6"
 dependencies = [
  "bytemuck",
- "serde",
 ]
 
 [[package]]
@@ -4847,20 +4832,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ron"
-version = "0.12.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "81116b9531d61eabc41aeb228e4b6b2435bcca3233b98cf3b3077d4e6e9debb3"
-dependencies = [
- "bitflags 2.13.2",
- "once_cell",
- "serde",
- "serde_derive",
- "typeid",
- "unicode-ident",
-]
-
-[[package]]
 name = "roxmltree"
 version = "0.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5948,12 +5919,6 @@ name = "typed-path"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9ce898823d8cd0f028662d2f349694b1af0a5cc9be83f1d213a00d3147445e1e"
-
-[[package]]
-name = "typeid"
-version = "1.0.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc7d623258602320d5c55d1bc22793b57daff0ec7efc270ea7d55ce1d5f5471c"
 
 [[package]]
 name = "typenum"
@@ -7267,7 +7232,7 @@ checksum = "e450f9b2ed1dff33c94c12589a87338689467b9c4f5d8a5710bd09a847d2c8a7"
 
 [[package]]
 name = "xtask"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "chrono",
  "serde_json",
