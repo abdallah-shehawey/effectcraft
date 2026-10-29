@@ -117,7 +117,7 @@ Come tell us what matters most to you on [Discord](https://discord.gg/artcraft).
 
 ## Progress log
 
-- 2026-10-27: Window geometry uses only the existing window.json store and Tracker, including monitor fitting; control runs skip saved geometry. Integrated the upstream desktop quit path (#1762).
+- 2026-10-29: Window geometry uses only the existing window.json store and Tracker, including monitor fitting; control runs skip saved geometry. Integrated the upstream desktop quit path (#1762).
 
 - 2026-10-26: Windows reopen at their last size, or maximized, at any interface size (such as 150%),
   and Restore after a maximized restart returns to the last normal size. On GNOME Wayland, where the
