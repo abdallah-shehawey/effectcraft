@@ -1,6 +1,6 @@
 # UI parity
 
-> **Last reviewed:** 2026-10-12 · **Last updated:** 2026-10-30 · **Change:** trivial (native window geometry uses one store; the shared egui dependency awaits its upstream merge) · **Target:** Adobe After Effects 2026
+> **Last reviewed:** 2026-10-12 · **Last updated:** 2026-10-18 · **Change:** minor (shape group Contents row elided; path-editing layer bounds #1220; closed issue references re-audited against `upstream/main` 470ea7a3) · **Target:** Adobe After Effects 2026
 
 How closely EffectCraft's interaction matches After Effects: tools, handles, snapping, nudging,
 modifier keys, shortcuts, drag behaviour, numeric entry, panels, context menus and feel. Evidence
@@ -49,9 +49,9 @@ Effects running; most of the rest parallelises.
 
 | Date | Change | Summary |
 |---|---|---|
-| 2026-10-30 | trivial | Native window geometry uses the existing window.json/Tracker store only. Control sessions skip saved geometry; native GNOME Wayland windows get standard caption controls through storytold/egui#3. Scores and estimates unchanged. |
 | 2026-10-18 | minor | A shape group's inner Contents (After Effects' elided Vectors group) draws no row: the group's path, fill/stroke and Transform list directly under the group |
 | 2026-10-13 | patch | Layer bounds are suppressed during path-point editing (#1220); shape/mask interaction regressions |
 | 2026-10-12 | minor | Closed issues (#302, #320, #491, #511, #553 and others) marked as closed instead of open; panels in their own windows (#486) |
 | 2026-10-12 | minor | Percentage guides and effect colour labels (26.5) added; rows updated |
+| 2026-10-30 | trivial | Native window geometry uses the existing window.json/Tracker store only. Control sessions skip saved geometry; native GNOME Wayland windows get standard caption controls through storytold/egui#3. Scores and estimates unchanged. |
 | 2026-10-10 | major | First UI parity checklist |
