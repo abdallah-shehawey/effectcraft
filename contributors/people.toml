@@ -25,6 +25,11 @@ real_name = "Brandon Thomas"
 display_name = "Brandon Thomas"
 sync_github_name = false
 
+[people.lewandowskit]
+real_name = "Tomasz Lewandowski"
+display_name = "Tomasz Lewandowski"
+sync_github_name = false
+
 [people.switch87]
 real_name = "Gert Pellin"
 display_name = "Gert Pellin"
@@ -101,3 +106,11 @@ sync_github_name = false
 
 [people.ki2pixel]
 display_name = "ki2pixel"
+
+[people.becauseno7]
+real_name = "Shuvra Basak"
+display_name = "Shuvra Basak"
+sync_github_name = false
+
+[people.ashokram-si]
+real_name = "Ashok Ram"
